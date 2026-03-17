@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-cvsc.local/schemas/deploy-request.schema.json",
+  "title": "DeployRequestProposal",
+  "type": "object",
+  "required": [
+    "host",
+    "repoPath",
+    "branch"
+  ],
+  "properties": {
+    "host": {
+      "type": "string"
+    },
+    "repoPath": {
+      "type": "string"
+    },
+    "branch": {
+      "type": "string"
+    },
+    "restartCommand": {
+      "type": "string"
+    }
+  }
+}

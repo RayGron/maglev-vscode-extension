@@ -1,0 +1,45 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Extension: Build Debug",
+      "type": "shell",
+      "command": "npm run build:extension:debug",
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Build Release",
+      "type": "shell",
+      "command": "npm run build:extension:release",
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Package Release",
+      "type": "shell",
+      "command": "npm run package:extension:release",
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Check",
+      "type": "shell",
+      "command": "npm run check",
+      "group": "test",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "lib": [
+      "ES2022"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ai-cvsc/contracts": [
+        "packages/contracts/src/index"
+      ],
+      "@ai-cvsc/auth": [
+        "packages/auth/src/index"
+      ],
+      "@ai-cvsc/gateway-client": [
+        "packages/gateway-client/src/index"
+      ],
+      "@ai-cvsc/execution": [
+        "packages/execution/src/index"
+      ],
+      "@ai-cvsc/agent-runtime": [
+        "packages/agent-runtime/src/index"
+      ]
+    }
+  },
+  "include": [
+    "apps/vscode-extension/**/*.ts",
+    "packages/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.js"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "maglev-vscode-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript workspace for the Maglev VS Code extension.",
+  "workspaces": [
+    "apps/vscode-extension",
+    "packages/*"
+  ],
+  "scripts": {
+    "build:extension:debug": "node scripts/build-extension.mjs debug",
+    "build:extension:release": "node scripts/build-extension.mjs release",
+    "package:extension:release": "node scripts/package-extension.mjs",
+    "build:debug": "npm run build:extension:debug",
+    "build:release": "npm run package:extension:release",
+    "check:ts": "tsc --noEmit -p tsconfig.json",
+    "check": "npm run check:ts"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.2",
+    "@types/node": "^22.13.10",
+    "@types/vscode": "^1.95.0",
+    "esbuild": "^0.25.1",
+    "typescript": "^5.8.2"
+  }
+}

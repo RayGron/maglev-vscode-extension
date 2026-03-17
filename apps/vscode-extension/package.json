@@ -1,0 +1,85 @@
+{
+  "name": "maglev-vscode-extension",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "displayName": "Maglev",
+  "publisher": "local",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RayGron/maglev-vscode-extension.git"
+  },
+  "homepage": "https://github.com/RayGron/maglev-vscode-extension",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage"
+  ],
+  "scripts": {
+    "build:debug": "node ../../scripts/build-extension.mjs debug",
+    "build:release": "node ../../scripts/build-extension.mjs release",
+    "package:release": "node ../../scripts/package-extension.mjs"
+  },
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aiCvsc.runTask",
+        "title": "Maglev: Run Task"
+      },
+      {
+        "command": "aiCvsc.showStatus",
+        "title": "Maglev: Show Status"
+      },
+      {
+        "command": "aiCvsc.deployLatest",
+        "title": "Maglev: Deploy Latest Run"
+      }
+    ],
+    "configuration": {
+      "title": "Maglev",
+      "properties": {
+        "aiCvsc.backendMode": {
+          "type": "string",
+          "enum": [
+            "openai_compat",
+            "secure_gateway"
+          ],
+          "default": "openai_compat",
+          "description": "Use local OpenAI-compatible backend for development or secure gateway for production."
+        },
+        "aiCvsc.runtimeConfigPath": {
+          "type": "string",
+          "default": "config/model-endpoints.json",
+          "description": "Path to the shared runtime config file that defines backend URLs, default model IDs, timeouts, and OpenAI-compatible response profiles."
+        },
+        "aiCvsc.apiBaseUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Optional override for the backend base URL. If empty, the value is loaded from aiCvsc.runtimeConfigPath."
+        },
+        "aiCvsc.model": {
+          "type": "string",
+          "default": "",
+          "description": "Optional override for the target model. If empty, the value is loaded from aiCvsc.runtimeConfigPath."
+        },
+        "aiCvsc.privateKeyPath": {
+          "type": "string",
+          "default": "",
+          "description": "Ed25519 private key path for signed requests."
+        },
+        "aiCvsc.publicKeyPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional public key path."
+        }
+      }
+    }
+  }
+}

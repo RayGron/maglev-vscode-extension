@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-cvsc.local/schemas/edit-proposal.schema.json",
+  "title": "EditProposal",
+  "type": "object",
+  "required": [
+    "path",
+    "content",
+    "summary"
+  ],
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

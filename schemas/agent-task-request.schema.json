@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-cvsc.local/schemas/agent-task-request.schema.json",
+  "title": "AgentTaskRequest",
+  "type": "object",
+  "required": [
+    "mode",
+    "runId",
+    "task",
+    "context"
+  ],
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "task_plan",
+        "edit_patch",
+        "commit_message",
+        "terminal_reply",
+        "deploy_request"
+      ]
+    },
+    "runId": {
+      "type": "string"
+    },
+    "task": {
+      "type": "string"
+    },
+    "context": {},
+    "constraints": {},
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

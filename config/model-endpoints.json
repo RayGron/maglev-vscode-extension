@@ -1,0 +1,17 @@
+{
+  "defaultBackendMode": "openai_compat",
+  "openaiCompat": {
+    "apiBaseUrl": "http://172.20.176.1:1234/v1",
+    "model": "qwen/qwen3.5-35b-a3b",
+    "requestTimeoutMs": 30000,
+    "jsonResponseProfile": {
+      "temperature": 0.2,
+      "maxTokens": [512, 1024]
+    }
+  },
+  "secureGateway": {
+    "apiBaseUrl": "https://127.0.0.1:8443",
+    "model": "qwen/qwen3.5-35b-a3b",
+    "requestTimeoutMs": 30000
+  }
+}
