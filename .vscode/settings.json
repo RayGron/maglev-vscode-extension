@@ -6,5 +6,6 @@
   "errorLens.messageEnabled": true,
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
-  }
+  },
+  "cmake.sourceDirectory": "E:/dev/Repos/maglev"
 }
