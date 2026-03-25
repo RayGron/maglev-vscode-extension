@@ -6,15 +6,24 @@ import { EditProposal } from '@ai-cvsc/contracts';
 export class EditReviewService {
   constructor(private readonly workspaceRoot: string) {}
 
+  async previewEdit(edit: EditProposal): Promise<void> {
+    await this.openDiff(edit);
+  }
+
+  async previewEdits(edits: EditProposal[]): Promise<void> {
+    const previewEdits = edits.slice(0, 5);
+    for (const edit of previewEdits) {
+      await this.openDiff(edit);
+    }
+  }
+
   async review(edits: EditProposal[]): Promise<EditProposal[]> {
     if (edits.length === 0) {
       return [];
     }
 
     const previewEdits = edits.slice(0, 5);
-    for (const edit of previewEdits) {
-      await this.openDiff(edit);
-    }
+    await this.previewEdits(previewEdits);
 
     if (edits.length > previewEdits.length) {
       await vscode.window.showInformationMessage(

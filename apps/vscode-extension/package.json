@@ -30,6 +30,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "aiCvsc.openAgentPanel",
+        "title": "Maglev: Open Agent Panel"
+      },
+      {
         "command": "aiCvsc.runTask",
         "title": "Maglev: Run Task"
       },
@@ -80,6 +84,15 @@
           "description": "Optional public key path."
         }
       }
+    },
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "aiCvsc.agentPanel",
+          "name": "Maglev Agent"
+        }
+      ]
     }
   }
 }

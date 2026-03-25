@@ -1,4 +1,5 @@
 import { AgentRuntime } from '@ai-cvsc/agent-runtime';
+import { AgentRunState } from '@ai-cvsc/agent-runtime';
 import { CommitMessageProposal } from '@ai-cvsc/contracts';
 import * as vscode from 'vscode';
 import { DeployReviewService } from '../services/deployReview';
@@ -12,6 +13,16 @@ function looksLikeDeployInstruction(task: string): boolean {
     || lowered.includes('connect to server');
 }
 
+export interface TaskRunObserver {
+  onPhaseChange?(phase: string): void | Promise<void>;
+  onRunChange?(run: AgentRunState): void | Promise<void>;
+}
+
+export interface TaskRunOptions {
+  openRunView?: boolean;
+  observer?: TaskRunObserver;
+}
+
 export class TaskPanel {
   constructor(
     private readonly runtime: AgentRuntime,
@@ -20,7 +31,7 @@ export class TaskPanel {
     private readonly deployReview: DeployReviewService,
   ) {}
 
-  async promptAndRunTask(initialValue?: string): Promise<void> {
+  async promptAndRunTask(initialValue?: string, options: TaskRunOptions = {}): Promise<void> {
     const task = initialValue ?? await vscode.window.showInputBox({
       prompt: 'Describe the task for the local agent runtime',
       ignoreFocusOut: true,
@@ -30,25 +41,41 @@ export class TaskPanel {
       return;
     }
 
+    const openRunView = options.openRunView ?? true;
+    const observer = options.observer;
+
     try {
+      await observer?.onPhaseChange?.('Planning the task');
       const run = await this.runtime.startRun(task);
-      await this.runView.showRun(run);
+      await observer?.onRunChange?.(run);
+
+      if (openRunView) {
+        await this.runView.showRun(run);
+      }
 
       if (run.edits.length === 0) {
+        await observer?.onPhaseChange?.('Completed planning with no proposed edits');
         await vscode.window.showInformationMessage('Run completed planning, but no file edits were proposed.');
         return;
       }
 
+      await observer?.onPhaseChange?.(`Reviewing ${run.edits.length} proposed edit${run.edits.length === 1 ? '' : 's'}`);
       const selectedEdits = await this.editReview.review(run.edits);
       if (selectedEdits.length === 0) {
+        await observer?.onPhaseChange?.('Stopped before applying edits');
         await vscode.window.showInformationMessage('Proposed edits were not applied.');
         return;
       }
 
+      await observer?.onPhaseChange?.(`Applying ${selectedEdits.length} selected edit${selectedEdits.length === 1 ? '' : 's'}`);
       await this.runtime.applyEdits(run.runId, selectedEdits, true);
-      await this.runView.showRun(run);
+      await observer?.onRunChange?.(run);
+      if (openRunView) {
+        await this.runView.showRun(run);
+      }
       await vscode.window.showInformationMessage(`Applied ${selectedEdits.length} file change${selectedEdits.length === 1 ? '' : 's'}.`);
 
+      await observer?.onPhaseChange?.('Awaiting check decision');
       const runChecks = await vscode.window.showInformationMessage(
         'Run local checks now?',
         { modal: true },
@@ -56,11 +83,16 @@ export class TaskPanel {
         'Skip',
       );
       if (runChecks === 'Run Checks') {
+        await observer?.onPhaseChange?.('Running local checks');
         await this.runtime.runChecks(run.runId, true);
-        await this.runView.showRun(run);
+        await observer?.onRunChange?.(run);
+        if (openRunView) {
+          await this.runView.showRun(run);
+        }
         await vscode.window.showInformationMessage('Local checks completed successfully.');
       }
 
+      await observer?.onPhaseChange?.('Awaiting commit decision');
       const createCommit = await vscode.window.showInformationMessage(
         'Create a git commit for these changes?',
         { modal: true },
@@ -68,20 +100,28 @@ export class TaskPanel {
         'Skip',
       );
       if (createCommit !== 'Commit') {
+        await observer?.onPhaseChange?.('Completed without commit');
         return;
       }
 
+      await observer?.onPhaseChange?.('Preparing commit message');
       const proposal = await this.runtime.prepareCommitMessage(run.runId);
       const reviewedCommit = await this.reviewCommitMessage(proposal);
       if (!reviewedCommit) {
+        await observer?.onPhaseChange?.('Commit cancelled during review');
         await vscode.window.showInformationMessage('Commit was cancelled before git commit.');
         return;
       }
 
+      await observer?.onPhaseChange?.('Creating git commit');
       const commitHash = await this.runtime.commitWithMessage(run.runId, reviewedCommit, true);
-      await this.runView.showRun(run);
+      await observer?.onRunChange?.(run);
+      if (openRunView) {
+        await this.runView.showRun(run);
+      }
       await vscode.window.showInformationMessage(`Created commit ${commitHash}.`);
 
+      await observer?.onPhaseChange?.('Awaiting push decision');
       const pushBranch = await vscode.window.showInformationMessage(
         'Push the current branch to origin?',
         { modal: true },
@@ -89,17 +129,29 @@ export class TaskPanel {
         'Skip',
       );
       if (pushBranch !== 'Push') {
+        await observer?.onPhaseChange?.('Completed with local commit only');
         return;
       }
 
+      await observer?.onPhaseChange?.('Pushing branch');
       await this.runtime.push(run.runId, true);
-      await this.runView.showRun(run);
+      await observer?.onRunChange?.(run);
+      if (openRunView) {
+        await this.runView.showRun(run);
+      }
       await vscode.window.showInformationMessage('Branch pushed successfully.');
 
       if (looksLikeDeployInstruction(task)) {
-        await this.executeDeploy(run.runId, task);
+        await observer?.onPhaseChange?.('Preparing deploy');
+        await this.executeDeploy(run.runId, task, options);
+        await observer?.onRunChange?.(this.runtime.getRun(run.runId));
+        await observer?.onPhaseChange?.('Completed');
+        return;
       }
+
+      await observer?.onPhaseChange?.('Completed');
     } catch (error) {
+      await observer?.onPhaseChange?.(`Failed: ${(error as Error).message}`);
       await vscode.window.showErrorMessage(`Maglev run failed: ${(error as Error).message}`);
     }
   }
@@ -157,16 +209,24 @@ export class TaskPanel {
     };
   }
 
-  private async executeDeploy(runId: string, instruction: string): Promise<void> {
+  private async executeDeploy(runId: string, instruction: string, options: TaskRunOptions = {}): Promise<void> {
+    const observer = options.observer;
+    const openRunView = options.openRunView ?? true;
     const preview = await this.runtime.prepareDeploy(runId, instruction);
     const approved = await this.deployReview.review(preview);
     if (!approved) {
+      await observer?.onPhaseChange?.('Deploy cancelled');
       await vscode.window.showInformationMessage('Deploy was cancelled.');
       return;
     }
 
+    await observer?.onPhaseChange?.('Deploying');
     const result = await this.runtime.deploy(runId, instruction, true);
-    await this.runView.showRun(this.runtime.getRun(runId));
+    const run = this.runtime.getRun(runId);
+    await observer?.onRunChange?.(run);
+    if (openRunView) {
+      await this.runView.showRun(run);
+    }
     const message = result.success
       ? `Deploy completed for ${result.host}. Health: ${result.health}.`
       : `Deploy failed for ${result.host}. Health: ${result.health}.`;
