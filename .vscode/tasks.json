@@ -2,7 +2,17 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Extension: Build Debug",
+      "label": "Extension: Install Dependencies (Linux)",
+      "type": "shell",
+      "command": "rm -rf node_modules && npm ci",
+      "group": "build",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Build Debug (Linux)",
       "type": "shell",
       "command": "npm run build:extension:debug",
       "group": "build",
@@ -12,7 +22,7 @@
       }
     },
     {
-      "label": "Extension: Build Release",
+      "label": "Extension: Build Release (Linux)",
       "type": "shell",
       "command": "npm run build:extension:release",
       "group": "build",
@@ -22,7 +32,7 @@
       }
     },
     {
-      "label": "Extension: Package Release",
+      "label": "Extension: Package Release (Linux)",
       "type": "shell",
       "command": "npm run package:extension:release",
       "group": "build",
@@ -32,9 +42,80 @@
       }
     },
     {
-      "label": "Extension: Check",
+      "label": "Extension: Check (Linux)",
       "type": "shell",
       "command": "npm run check",
+      "group": "test",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Install Dependencies (Windows)",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "if (Test-Path node_modules) { Remove-Item node_modules -Recurse -Force }; & npm.cmd ci"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Build Debug (Windows)",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": [
+        "/C",
+        "npm.cmd run build:extension:debug"
+      ],
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Build Release (Windows)",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": [
+        "/C",
+        "npm.cmd run build:extension:release"
+      ],
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Package Release (Windows)",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": [
+        "/C",
+        "npm.cmd run package:extension:release"
+      ],
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Extension: Check (Windows)",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": [
+        "/C",
+        "npm.cmd run check"
+      ],
       "group": "test",
       "problemMatcher": "$tsc",
       "options": {

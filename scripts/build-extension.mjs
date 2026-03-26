@@ -1,11 +1,13 @@
 import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 
 const mode = process.argv[2] === 'release' ? 'release' : 'debug';
 const isRelease = mode === 'release';
-const workspaceRoot = path.resolve(import.meta.dirname, '..');
+const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const workspaceRoot = path.resolve(scriptDir, '..');
 const entryPoint = path.join(workspaceRoot, 'apps', 'vscode-extension', 'src', 'extension.ts');
 const outdir = path.join(workspaceRoot, 'apps', 'vscode-extension', 'dist');
 

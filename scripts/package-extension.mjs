@@ -1,9 +1,11 @@
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-const workspaceRoot = path.resolve(import.meta.dirname, '..');
+const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const workspaceRoot = path.resolve(scriptDir, '..');
 const extensionDir = path.join(workspaceRoot, 'apps', 'vscode-extension');
 const outputDir = path.join(workspaceRoot, 'dist');
 const packagePath = path.join(outputDir, 'maglev-vscode-extension-0.1.0.vsix');

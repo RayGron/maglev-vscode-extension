@@ -12,7 +12,7 @@
       "outFiles": [
         "${workspaceFolder}/apps/vscode-extension/dist/**/*.js"
       ],
-      "preLaunchTask": "Extension: Build Debug"
+      "preLaunchTask": "Extension: Build Debug (Linux)"
     },
     {
       "name": "Run VS Code Extension (Release Build)",
@@ -25,7 +25,7 @@
       "outFiles": [
         "${workspaceFolder}/apps/vscode-extension/dist/**/*.js"
       ],
-      "preLaunchTask": "Extension: Build Release"
+      "preLaunchTask": "Extension: Build Release (Linux)"
     }
   ]
 }
