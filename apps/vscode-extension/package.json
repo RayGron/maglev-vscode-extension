@@ -2,7 +2,7 @@
   "name": "maglev-vscode-extension",
   "version": "0.1.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "LGPL-3.0-or-later",
   "displayName": "Maglev",
   "publisher": "local",
   "repository": {

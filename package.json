@@ -2,6 +2,7 @@
   "name": "maglev-vscode-workspace",
   "version": "0.1.0",
   "private": true,
+  "license": "LGPL-3.0-or-later",
   "description": "TypeScript workspace for the Maglev VS Code extension.",
   "workspaces": [
     "apps/vscode-extension",

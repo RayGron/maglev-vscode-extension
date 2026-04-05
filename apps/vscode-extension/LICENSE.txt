@@ -1,7 +1,4 @@
-UNLICENSED
+This extension is licensed under the GNU Lesser General Public License,
+version 3 or (at your option) any later version.
 
-Copyright (c) Maglev contributors.
-All rights reserved.
-
-This extension is not licensed for public redistribution or reuse
-unless separate written permission is provided by the copyright holder.
+See the repository root LICENSE file for the full text.
